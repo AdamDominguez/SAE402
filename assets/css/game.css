@@ -1,0 +1,26 @@
+:root {
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+    width: 402px;
+    height: 874;
+    margin: 0;
+}
+
+.buggatiroyale {
+    position: absolute;
+    bottom: 0;
+}
+
+.buggatiroyale_wheel {
+    position: absolute;
+    bottom: 0;
+    left: 2rem;
+    transform-origin: center center;
+    transition: transform 0.1s ease-out;
+    pointer-events: none;
+}
