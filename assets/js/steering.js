@@ -4,10 +4,11 @@ let ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 let currentRotation = 0;
+let currentPitch = 45; 
 let roadShiftX = 0;
-let forwardSpeedY = 0;
 let bombs = [];
 let frameCount = 0;
+let lineOffset = 0;
 
 window.addEventListener("click", handleClick, { once: true });
 
@@ -28,19 +29,23 @@ function handleClick() {
 }
 
 function handleOrientation(event) {
-    currentRotation = event.gamma || 0;
+    currentRotation = event.gamma || 0; 
+    currentPitch = event.beta || 45; 
+
     volant.style.transform = `rotate(${currentRotation}deg)`;
 }
 
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    roadShiftX -= currentRotation * 0.15;
+    let speedMultiplier = 1 + ((45 - currentPitch) * 0.04);
+
+    speedMultiplier = Math.max(0.2, Math.min(speedMultiplier, 3));
+
+    roadShiftX -= currentRotation * 0.15 * speedMultiplier;
     let maxShift = canvas.width / 1.5;
     if (roadShiftX > maxShift) roadShiftX = maxShift;
     if (roadShiftX < -maxShift) roadShiftX = -maxShift;
-
-    forwardSpeedY += 0.08;
 
     let horizonY = canvas.height * 0.45;
     let horizonX = (canvas.width / 2) + roadShiftX;
@@ -66,20 +71,24 @@ function gameLoop() {
     ctx.lineTo(bottomRoadLeft, canvas.height);
     ctx.fill();
 
+    lineOffset += 15 * speedMultiplier;
+
     frameCount++;
-    if (frameCount % 60 === 0) {
+
+    let spawnRate = Math.max(15, Math.floor(60 / speedMultiplier));
+    if (frameCount % spawnRate === 0) {
         bombs.push({
             y: horizonY,
             roadPosition: Math.random(),
-            speed: 2 + Math.random() * 2 
+            speed: 2 + Math.random() * 2
         });
     }
 
     for (let i = bombs.length - 1; i >= 0; i--) {
         let bomb = bombs[i];
 
-        bomb.speed += 0.05;
-        bomb.y += bomb.speed;
+        bomb.speed += 0.05 * speedMultiplier;
+        bomb.y += bomb.speed * speedMultiplier;
 
         let progress = (bomb.y - horizonY) / (canvas.height - horizonY);
 
@@ -90,7 +99,8 @@ function gameLoop() {
 
         let currentLeftEdge = topRoadLeft * (1 - progress) + bottomRoadLeft * progress;
         let currentRightEdge = topRoadRight * (1 - progress) + bottomRoadRight * progress;
-        let bombSize = 10 + (120 * progress); 
+
+        let bombSize = 10 + (120 * progress);
         let bombX = currentLeftEdge + ((currentRightEdge - currentLeftEdge) * bomb.roadPosition) - (bombSize / 2);
 
         ctx.fillStyle = "red";
@@ -98,7 +108,7 @@ function gameLoop() {
 
         if (progress > 0.9 && progress < 1.05) {
             let carCenterX = canvas.width / 2;
-            let carHitboxWidth = 150; 
+            let carHitboxWidth = 150;
 
             if (bombX + bombSize > carCenterX - (carHitboxWidth / 2) && bombX < carCenterX + (carHitboxWidth / 2)) {
                 ctx.fillStyle = "rgba(255, 0, 0, 0.4)";
