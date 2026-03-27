@@ -28,6 +28,7 @@ body {
     width: 100%;
     display: flex;
     justify-content: center;
+    animation: moteur 0.5s infinite ease-in-out alternate;
 }
 
 .buggatiroyale_wheel {
@@ -36,4 +37,14 @@ body {
     left: 2rem;
     transform-origin: center center;
     pointer-events: none;
+}
+
+@keyframes moteur {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(-10px);
+    }
 }
