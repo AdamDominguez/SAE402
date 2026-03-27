@@ -79,9 +79,10 @@ window.addEventListener("click", startEngine, { once: true });
 
 // --- GAME LOGIC ---
 const updateBuildings = (speedMult, horizonY, tL, tR, bL, bR) => {
-    if (pairedBuildings.length === 0 || pairedBuildings[pairedBuildings.length - 1].y > horizonY + 50) {
+    // Spawn buildings much closer together (every 8 pixels instead of 50)
+    if (pairedBuildings.length === 0 || pairedBuildings[pairedBuildings.length - 1].y > horizonY + 8) {
         pairedBuildings.push({
-            y: horizonY - 20,
+            y: horizonY, // Spawn exactly on the horizon line for smooth scaling
             img: loadedBuildings[Math.floor(Math.random() * loadedBuildings.length)]
         });
     }
@@ -92,21 +93,28 @@ const updateBuildings = (speedMult, horizonY, tL, tR, bL, bR) => {
 
         let progress = Math.max(0, (b.y - horizonY) / (canvas.height - horizonY));
         let scale = 0.2 + progress * 4.0;
-        let w = b.img.width * scale;
+        let w = b.img.width * scale * 1.5;
         let h = b.img.height * scale;
 
         let roadPosL = tL * (1 - progress) + bL * progress;
         let roadPosR = tR * (1 - progress) + bR * progress;
 
+        // --- NEW: FADE-IN MATH ---
+        // Multiplier controls how fast the fog clears. 
+        // 8 means it is fully visible by the time progress hits 0.125 (12.5% of the way down)
+        let fadeAlpha = Math.min(1, progress * 26);
+
         // Left Building
         ctx.save();
+        ctx.globalAlpha = fadeAlpha; // Apply the transparency
         ctx.translate(roadPosL - w, b.y);
         ctx.transform(-3, 0.2, 0, 1.5, 0, -(w * 0.2 * 0.1));
         ctx.drawImage(b.img, 0, -h, w, h);
-        ctx.restore();
+        ctx.restore(); // This automatically resets globalAlpha back to 1 for the rest of the game!
 
         // Right Building
         ctx.save();
+        ctx.globalAlpha = fadeAlpha; // Apply the transparency
         ctx.translate(roadPosR, b.y);
         ctx.transform(3, 0.1, 0, 1.5, 0, 0);
         ctx.drawImage(b.img, 0, -h, w, h);
@@ -256,9 +264,17 @@ const gameLoop = () => {
     frameCount++;
 
     // If dead, hit the brakes! Set speed to 0.
+    // If dead, hit the brakes! Set speed to 0.
     let speedMult = gameOver ? 0 : Math.max(0.1, Math.min(1 + ((45 - pitch) * 0.04), 3));
-    roadShiftX = Math.max(-canvas.width, Math.min(roadShiftX - (rotation * 0.2 * speedMult), canvas.width));
-    lineOffset += speedMult * 1.5;
+
+    // Clamp the turning radius tighter so buildings don't wrap around the screen
+    roadShiftX = Math.max(-canvas.width * 0.6, Math.min(roadShiftX - (rotation * 0.2 * speedMult), canvas.width * 0.6));
+
+    // Move the road lines TOWARDS the camera to simulate forward momentum
+    lineOffset -= speedMult * 0.4;
+
+    // Loop the offset so it never drops below zero (prevents visual glitches)
+    if (lineOffset < 0) lineOffset += 100;
 
     const horizonY = canvas.height * 0.45;
     const horizonX = (canvas.width / 2) + roadShiftX;
@@ -280,7 +296,7 @@ const gameLoop = () => {
         let progress = i / numSlices;
         let dy = horizonY + (i * sliceHeight);
 
-        ctx.fillStyle = (Math.floor(i + lineOffset) % 10 < 5) ? "#444444" : "#555555";
+        ctx.fillStyle = (Math.floor(i + lineOffset) % 10 < 5) ? "#7b7b7b" : "#acacac";
         ctx.fillRect(0, dy, canvas.width, sliceHeight + 1);
 
         ctx.moveTo(0, dy);
@@ -297,8 +313,14 @@ const gameLoop = () => {
     ctx.fillRect(0, horizonY, canvas.width, 150);
 
     // Update & Draw Elements
-    const tW = 300, bW = canvas.width * 1.25;
-    updateBuildings(speedMult, horizonY, horizonX - tW, horizonX + tW, (canvas.width / 2) - bW, (canvas.width / 2) + bW);
+    // Update & Draw Elements
+    const tW = 10;
+    const bW = canvas.width * 0.85;
+
+    // Shift the bottom corners slightly with the steering to keep the corridor straight
+    const bottomShiftX = roadShiftX * 0.4;
+
+    updateBuildings(speedMult, horizonY, horizonX - tW, horizonX + tW, (canvas.width / 2) - bW + bottomShiftX, (canvas.width / 2) + bW + bottomShiftX);
     updateEnemyAndBombs(speedMult);
     drawUI();
 };
