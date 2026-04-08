@@ -17,6 +17,39 @@ body {
     touch-action: none;
 }
 
+/* --- ECRAN MAP / GPS --- */
+.map_screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: black;
+    z-index: 50;
+}
+
+#map {
+    flex-grow: 1;
+    width: 100%;
+}
+
+#info-distance {
+    background-color: bisque;
+    color: brown;
+    text-align: center;
+    padding: 15px;
+    font-size: 1.5rem;
+    font-family: "UnifrakturCook", cursive;
+    font-weight: bold;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* --- INTRO & DIALOGUES --- */
 .gameIntro {
     position: absolute;
     top: 0;
@@ -52,8 +85,69 @@ body {
     background-color: bisque;
     border: none;
     border-radius: 5px;
+    cursor: pointer;
 }
 
+.menu_dialogue {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 15;
+}
+
+.boite_dialogue {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 10%);
+    background-color: bisque;
+    color: brown;
+    padding: 5px;
+    border-radius: 10px;
+    max-width: 600px;
+    max-height: 400px;
+    text-align: center;
+    font-family: "UnifrakturCook", cursive;
+    font-size: 1.2rem;
+    box-shadow: 0px 0px 20px rgba(165, 42, 42, 0.5);
+}
+
+.dialogue_button {
+    margin-top: 25px;
+    padding: 10px 20px;
+    background-color: brown;
+    color: bisque;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: bold;
+}
+
+.lettre {
+    opacity: 0;
+    transition: opacity 0.05s;
+}
+
+.lettre.visible {
+    opacity: 1;
+}
+
+.dialogue_perso {
+    position: absolute;
+    z-index: -1;
+    max-width: 100%;
+    width: 70lvw;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 10%);
+}
+
+/* --- JEU & UI --- */
 #gameCanvas {
     position: absolute;
     top: 0;
@@ -109,5 +203,82 @@ body {
 @media (max-width: 550px) {
     .buggatiroyale_dash {
         width: 300%;
+    }
+}
+
+/* --- ECRANS DE FIN --- */
+.overlay_screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 30;
+    color: bisque;
+    font-family: "UnifrakturCook", cursive;
+    text-align: center;
+}
+
+.overlay_screen p {
+    font-size: 1.5rem;
+    margin: 10px 0 30px 0;
+}
+
+.titre_defaite {
+    font-size: 4rem;
+    color: #ff3333;
+    text-shadow: 0 0 10px red;
+    margin: 0;
+}
+
+.titre_victoire {
+    font-size: 4rem;
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffaa00;
+    margin: 0;
+}
+
+.overlay_btn {
+    padding: 15px 30px;
+    background-color: brown;
+    color: bisque;
+    border: 2px solid bisque;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-family: "UnifrakturCook", cursive;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.overlay_btn:hover {
+    transform: scale(1.1);
+    background-color: #8b0000;
+}
+
+.glowing_piece {
+    margin: 30px 0;
+    position: relative;
+    display: inline-block;
+}
+
+.glowing_piece img {
+    width: 180px;
+    filter: drop-shadow(0 0 15px #ffd700) drop-shadow(0 0 30px #ffaa00);
+    animation: pulseGlow 1.5s infinite alternate;
+}
+
+@keyframes pulseGlow {
+    from {
+        filter: drop-shadow(0 0 10px #ffd700) drop-shadow(0 0 20px #ff8800);
+        transform: scale(1);
+    }
+
+    to {
+        filter: drop-shadow(0 0 30px #ffffaa) drop-shadow(0 0 60px #ffdd00);
+        transform: scale(1.08);
     }
 }

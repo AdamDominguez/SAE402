@@ -9,22 +9,58 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 
 <body>
-    <div class="gameIntro">
+    <div id="map-container" class="map_screen">
+        <div id="map"></div>
+        <div id="info-distance">Recherche du signal GPS...</div>
+    </div>
+
+    <div class="gameIntro" style="display: none;">
         <div>
             <h1>Rue du Sauvage - Août 1944</h1>
             <p>Lors de la Libération, les Alliés bombardèrent Mulhouse en visant les tramways de la rue du Sauvage, mais
-                à
-                la suite d'imprécisions, beaucoup de civils perdirent la vie.
+                à la suite d'imprécisions, beaucoup de civils perdirent la vie.
             </p>
         </div>
         <button class="gameIntroBtn">JOUER</button>
     </div>
-    <canvas id="gameCanvas"></canvas>
 
-    <div class="buggatiroyale">
+    <div class="menu_dialogue" style="display: none;">
+        <div class="dialogue_conteneur">
+            <img class="dialogue_perso" src="assets/img/villageois.png" alt="Villageois">
+            <div class="boite_dialogue">
+                <h3>Villageois</h3>
+                <p class="texte_dialogue" id="texte_dialogue">Fuyez malheureux ! Les bombardiers alliés pilonnent la rue
+                    du Sauvage ! Prenez votre Bugatti et sortez de la ville avant que les tramways ne vous explosent à
+                    la figure. Que Dieu vous garde !</p>
+                <div class="dialogue_button" id="btn_fermer_dialogue">Continuer</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameOverScreen" class="overlay_screen" style="display: none;">
+        <h1 class="titre_defaite">GAME OVER</h1>
+        <p id="gameOverMessage">Votre Bugatti est détruite !</p>
+        <button class="overlay_btn" onclick="location.reload()">Rejouer</button>
+    </div>
+
+    <div id="victoryScreen" class="overlay_screen" style="display: none;">
+        <h1 class="titre_victoire">Succès !</h1>
+        <div class="glowing_piece">
+            <img src="assets/img/chronorouage_piece.png" alt="Pièce d'horlogerie">
+        </div>
+        <p>Vous avez trouvé la pièce 4 !</p>
+        <button class="overlay_btn" id="btn_victory_continue">Continuer</button>
+    </div>
+
+    <canvas id="gameCanvas" style="display: none;"></canvas>
+
+    <div class="buggatiroyale" style="display: none;">
         <img class="buggatiroyale_wheel" src="assets/img/steeringwheel.png" alt="Steering Wheel">
         <img class="buggatiroyale_dash" src="assets/img/dashboard.png" alt="Dashboard">
     </div>
