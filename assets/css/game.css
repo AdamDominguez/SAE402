@@ -88,6 +88,7 @@ body {
     cursor: pointer;
 }
 
+/* --- INTRO & DIALOGUES --- */
 .menu_dialogue {
     position: absolute;
     top: 0;
@@ -99,33 +100,63 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 15;
+    padding: 15px;
+    box-sizing: border-box;
 }
 
 .boite_dialogue {
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, 10%);
     background-color: bisque;
     color: brown;
-    padding: 5px;
+    padding: 20px;
     border-radius: 10px;
+    width: 90%;
     max-width: 600px;
-    max-height: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
     text-align: center;
     font-family: "UnifrakturCook", cursive;
     font-size: 1.2rem;
     box-shadow: 0px 0px 20px rgba(165, 42, 42, 0.5);
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .dialogue_button {
-    margin-top: 25px;
+    margin-top: 20px;
     padding: 10px 20px;
     background-color: brown;
     color: bisque;
     border-radius: 5px;
     cursor: pointer;
-    display: inline-block;
     font-weight: bold;
+    flex-shrink: 0;
+}
+
+.dialogue_perso {
+    position: absolute;
+    z-index: 1;
+    max-width: 100%;
+    width: 70vw;
+    max-height: 90vh;
+    object-fit: contain;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.6;
+}
+
+@media (max-width: 450px) {
+    .boite_dialogue {
+        font-size: 1rem;
+        padding: 15px;
+    }
+
+    .dialogue_button {
+        padding: 8px 16px;
+    }
 }
 
 .lettre {
@@ -135,16 +166,6 @@ body {
 
 .lettre.visible {
     opacity: 1;
-}
-
-.dialogue_perso {
-    position: absolute;
-    z-index: -1;
-    max-width: 100%;
-    width: 70lvw;
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, 10%);
 }
 
 /* --- JEU & UI --- */
